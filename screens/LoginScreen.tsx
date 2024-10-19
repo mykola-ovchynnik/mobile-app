@@ -12,13 +12,10 @@ import { sharedStyles } from "../styles/SharedStyles";
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const isKeyboardVisible = useKeyboardVisibility();
 
-  const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
-
   const handleFormSubmit = () => {
-    // Handle login logic
+    console.log("Email: ", email, "\nPassword: ", password);
   };
 
   return (
@@ -35,13 +32,11 @@ const LoginScreen = () => {
           value={password}
           placeholder="Пароль"
           onTextChange={setPassword}
-          isPasswordVisible={isPasswordVisible}
-          togglePasswordVisibility={togglePasswordVisibility}
         />
       </View>
 
       {!isKeyboardVisible && (
-        <View style={sharedStyles.buttonContainer}>
+        <View style={styles.buttonContainer}>
           <SubmitButton text="Увійти" onPress={handleFormSubmit} />
           <SwitchScreenLink
             prompt="Немає акаунту?"
@@ -55,5 +50,14 @@ const LoginScreen = () => {
     </FormContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  buttonContainer: {
+    marginTop: 43,
+    paddingBottom: 43,
+    gap: 16,
+    width: "100%",
+  },
+});
 
 export default LoginScreen;

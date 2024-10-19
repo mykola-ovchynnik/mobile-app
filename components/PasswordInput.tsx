@@ -1,43 +1,55 @@
-import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+// PasswordInput.tsx
+import React, { useState } from "react";
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  TextStyle,
+  ViewStyle,
+} from "react-native";
 import Input from "./Input";
 import { colors } from "../styles/global";
 
 interface PasswordInputProps {
   value: string;
-  placeholder: string;
+  placeholder?: string;
   onTextChange: (text: string) => void;
-  isPasswordVisible: boolean;
-  togglePasswordVisibility: () => void;
+  containerStyle?: ViewStyle;
+  inputStyle?: TextStyle;
 }
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
   value,
   placeholder,
   onTextChange,
-  isPasswordVisible,
-  togglePasswordVisibility,
-}) => (
-  <Input
-    value={value}
-    placeholder={placeholder}
-    secureTextEntry={isPasswordVisible}
-    onTextChange={onTextChange}
-    rightButton={
-      <TouchableOpacity onPress={togglePasswordVisibility}>
-        <Text style={styles.passwordButtonText}>Показати</Text>
-      </TouchableOpacity>
-    }
-    outerStyles={styles.passwordInputContainer}
-  />
-);
+  containerStyle,
+  inputStyle,
+}) => {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
+
+  return (
+    <Input
+      value={value}
+      placeholder={placeholder}
+      onTextChange={onTextChange}
+      secureTextEntry={!isPasswordVisible}
+      rightElement={
+        <TouchableOpacity onPress={togglePasswordVisibility}>
+          <Text style={styles.toggleButtonText}>
+            {isPasswordVisible ? "Приховати" : "Показати"}
+          </Text>
+        </TouchableOpacity>
+      }
+      containerStyle={containerStyle}
+      inputStyle={inputStyle}
+    />
+  );
+};
 
 const styles = StyleSheet.create({
-  passwordInputContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  passwordButtonText: {
+  toggleButtonText: {
     color: colors.blue,
     fontWeight: "400",
     fontSize: 16,

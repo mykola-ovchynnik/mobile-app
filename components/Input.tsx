@@ -1,74 +1,96 @@
-import { FC, useState } from "react";
-import { StyleSheet, TextInput, View, ViewProps } from "react-native";
+// Input.tsx
+import React, { FC, useState } from "react";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  ViewStyle,
+  TextInputProps,
+  TextStyle,
+} from "react-native";
 import { colors } from "../styles/global";
 
-type InputProps = {
+interface InputProps extends Omit<TextInputProps, "style"> {
   value: string;
-  placeholder?: string;
   onTextChange: (text: string) => void;
-  rightButton?: React.ReactNode;
-  outerStyles?: ViewProps["style"];
-  secureTextEntry?: boolean;
-  autofocus?: boolean;
-};
+  placeholder?: string;
+  rightElement?: React.ReactNode;
+  leftElement?: React.ReactNode;
+  containerStyle?: ViewStyle;
+  inputStyle?: TextStyle;
+}
 
 const Input: FC<InputProps> = ({
   value,
   placeholder,
   onTextChange,
-  rightButton,
-  outerStyles,
+  rightElement,
+  leftElement,
+  containerStyle,
+  inputStyle,
   secureTextEntry = false,
-  autofocus = false,
+  autoFocus = false,
+  ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
-  const onFocus = () => {
-    setIsFocused(true);
-  };
-
-  const onBlur = () => {
-    setIsFocused(false);
-  };
-
   return (
-    <View style={[styles.input, isFocused && styles.focused, outerStyles]}>
+    <View
+      style={[
+        styles.container,
+        isFocused && styles.focusedContainer,
+        containerStyle,
+      ]}
+    >
+      {leftElement && <View style={styles.leftElement}>{leftElement}</View>}
       <TextInput
-        style={styles.text}
+        style={[styles.textInput, inputStyle]}
         placeholder={placeholder}
         value={value}
         onChangeText={onTextChange}
         secureTextEntry={secureTextEntry}
         placeholderTextColor={colors.placeholderGrey}
         autoCapitalize="none"
-        autoFocus={autofocus}
-        onFocus={onFocus}
-        onBlur={onBlur}
+        autoFocus={autoFocus}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        accessible={true}
+        accessibilityLabel={placeholder}
+        {...rest}
       />
-
-      {rightButton}
+      {rightElement && <View style={styles.rightElement}>{rightElement}</View>}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  input: {
+  container: {
     height: 50,
-    padding: 16,
+    paddingHorizontal: 16,
     backgroundColor: colors.lightGrey,
-
     borderWidth: 1,
     borderRadius: 8,
     borderColor: colors.borderGrey,
+    flexDirection: "row",
+    alignItems: "center",
   },
-  text: {
+  focusedContainer: {
+    backgroundColor: colors.white,
+    borderColor: colors.orange,
+  },
+  textInput: {
+    flex: 1,
     fontWeight: "400",
     fontSize: 16,
     lineHeight: 18,
+    color: colors.blackPrimary,
+    paddingVertical: 0, // Adjusted to align text vertically
   },
-  focused: {
-    backgroundColor: colors.white,
-    borderColor: colors.orange,
+  leftElement: {
+    marginRight: 8,
+  },
+  rightElement: {
+    marginLeft: 8,
   },
 });
 
