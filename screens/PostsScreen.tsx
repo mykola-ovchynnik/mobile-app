@@ -1,20 +1,13 @@
-import React, { FC } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { FC } from "react";
+import { View } from "react-native";
+import User from "../components/User";
 
 const PostsScreen: FC = () => {
   return (
-    <View style={styles.container}>
-      <Text>Posts Screen</Text>
+    <View>
+      <User userName={"Natali Romanova"} userEmail={"email@example.com"} />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default PostsScreen;

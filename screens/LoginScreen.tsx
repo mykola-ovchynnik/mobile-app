@@ -9,7 +9,7 @@ import SwitchScreenLink from "../components/SwitchScreenLink";
 import useKeyboardVisibility from "../hooks/useKeyboardVisibility";
 import { sharedStyles } from "../styles/SharedStyles";
 import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
-import { StackParamList } from "../navigaion/StackNavigator";
+import { StackParamList } from "../navigation/StackNavigator";
 
 type LoginScreenProps = NativeStackScreenProps<StackParamList, "Login">;
 

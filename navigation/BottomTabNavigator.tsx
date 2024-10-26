@@ -1,6 +1,5 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationProp } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
@@ -9,26 +8,9 @@ import CreatePostScreen from "../screens/CreatePostScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import TabBarIcon from "../components/TabBarIcon";
 
-type RootStackParamList = {
-  Posts: undefined;
-  "Create Post": undefined;
-  Profile: undefined;
-  Login: undefined;
-};
+const Tab = createBottomTabNavigator();
 
-type BottomTabNavigatorProps = {
-  navigation: NavigationProp<RootStackParamList>;
-};
-
-const Tab = createBottomTabNavigator<RootStackParamList>();
-
-const BottomTabNavigator: React.FC<BottomTabNavigatorProps> = ({
-  navigation,
-}) => {
-  const handleLogout = () => {
-    navigation.navigate("Login");
-  };
-
+const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       initialRouteName="Posts"
@@ -46,15 +28,12 @@ const BottomTabNavigator: React.FC<BottomTabNavigatorProps> = ({
         headerLeftContainerStyle: { padding: 16 },
         tabBarStyle: styles.tabBar,
         tabBarShowLabel: false,
-        tabBarItemStyle: { marginHorizontal: 5 }, // Adds 10px gap between icons
-        tabBarActiveTintColor: "black",
-        tabBarInactiveTintColor: "black", // Ensures icons don't change color on focus
       }}
     >
       <Tab.Screen
         name="Posts"
         component={PostsScreen}
-        options={{
+        options={({ navigation }) => ({
           title: "Публікації",
           tabBarIcon: ({ color, size }) => (
             <TabBarIcon name="grid" color={color} size={size} />
@@ -64,10 +43,10 @@ const BottomTabNavigator: React.FC<BottomTabNavigatorProps> = ({
               name="log-out"
               size={24}
               color={"#BDBDBD"}
-              onPress={handleLogout}
+              onPress={() => navigation.navigate("Login")}
             />
           ),
-        }}
+        })}
       />
       <Tab.Screen
         name="Create Post"

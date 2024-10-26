@@ -10,7 +10,7 @@ import useKeyboardVisibility from "../hooks/useKeyboardVisibility";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
 import { colors } from "../styles/global";
 import { sharedStyles } from "../styles/SharedStyles";
-import { StackParamList } from "../navigaion/StackNavigator";
+import { StackParamList } from "../navigation/StackNavigator";
 import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
 type RegistrationScreenProps = NativeStackScreenProps<
