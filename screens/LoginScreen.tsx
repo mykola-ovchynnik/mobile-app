@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import FormContainer from "../components/FormContainer";
 import Header from "../components/Header";
@@ -8,14 +8,26 @@ import SubmitButton from "../components/SubmitButton";
 import SwitchScreenLink from "../components/SwitchScreenLink";
 import useKeyboardVisibility from "../hooks/useKeyboardVisibility";
 import { sharedStyles } from "../styles/SharedStyles";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
+import { StackParamList } from "../navigaion/StackNavigator";
 
-const LoginScreen = () => {
+type LoginScreenProps = NativeStackScreenProps<StackParamList, "Login">;
+
+const LoginScreen: FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const isKeyboardVisible = useKeyboardVisibility();
 
+  const handleEmailChange = (text: string) => setEmail(text);
+
+  const handlePasswordChange = (text: string) => setPassword(text);
+
   const handleFormSubmit = () => {
-    console.log("Email: ", email, "\nPassword: ", password);
+    navigation.navigate("BottomTabNavigator");
+  };
+
+  const onRegistrationPress = () => {
+    navigation.navigate("Registration");
   };
 
   return (
@@ -26,12 +38,12 @@ const LoginScreen = () => {
         <Input
           value={email}
           placeholder="Адреса електронної пошти"
-          onTextChange={setEmail}
+          onTextChange={handleEmailChange}
         />
         <PasswordInput
           value={password}
           placeholder="Пароль"
-          onTextChange={setPassword}
+          onTextChange={handlePasswordChange}
         />
       </View>
 
@@ -41,9 +53,7 @@ const LoginScreen = () => {
           <SwitchScreenLink
             prompt="Немає акаунту?"
             linkText="Зареєструватися"
-            onPress={() => {
-              // Navigate to registration screen
-            }}
+            onPress={onRegistrationPress}
           />
         </View>
       )}

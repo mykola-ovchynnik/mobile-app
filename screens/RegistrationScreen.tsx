@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { View, TouchableOpacity, Image, StyleSheet } from "react-native";
 import FormContainer from "../components/FormContainer";
 import Header from "../components/Header";
@@ -10,16 +10,20 @@ import useKeyboardVisibility from "../hooks/useKeyboardVisibility";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
 import { colors } from "../styles/global";
 import { sharedStyles } from "../styles/SharedStyles";
+import { StackParamList } from "../navigaion/StackNavigator";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-const RegistrationScreen = () => {
+type RegistrationScreenProps = NativeStackScreenProps<
+  StackParamList,
+  "Registration"
+>;
+
+const RegistrationScreen: FC<RegistrationScreenProps> = ({ navigation }) => {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [avatarUri, setAvatarUri] = useState("");
   const isKeyboardVisible = useKeyboardVisibility();
-
-  const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
 
   const handleAvatarSelection = () => {
     setAvatarUri((prevUri) => (prevUri ? "" : "dummyUri"));
@@ -27,6 +31,10 @@ const RegistrationScreen = () => {
 
   const handleFormSubmit = () => {
     // Handle registration logic
+  };
+
+  const onLoginPress = () => {
+    navigation.navigate("Login");
   };
 
   return (
@@ -60,8 +68,6 @@ const RegistrationScreen = () => {
           value={password}
           placeholder="Пароль"
           onTextChange={setPassword}
-          isPasswordVisible={isPasswordVisible}
-          togglePasswordVisibility={togglePasswordVisibility}
         />
       </View>
 
@@ -71,9 +77,7 @@ const RegistrationScreen = () => {
           <SwitchScreenLink
             prompt="Вже є акаунт?"
             linkText="Увійти"
-            onPress={() => {
-              // Navigate to login screen
-            }}
+            onPress={onLoginPress}
           />
         </View>
       )}
