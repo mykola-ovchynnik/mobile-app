@@ -28,6 +28,8 @@ const BottomTabNavigator = () => {
         headerLeftContainerStyle: { padding: 16 },
         tabBarStyle: styles.tabBar,
         tabBarShowLabel: false,
+        tabBarActiveTintColor: "rgba(33, 33, 33, 0.8)",
+        tabBarInactiveTintColor: "rgba(33, 33, 33, 0.8)",
       }}
     >
       <Tab.Screen
@@ -51,8 +53,9 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Create Post"
         component={CreatePostScreen}
-        options={{
+        options={({ navigation }) => ({
           title: "Створити публікацію",
+          tabBarStyle: { display: "none" },
           tabBarIcon: ({ size }) => (
             <TabBarIcon
               name="plus"
@@ -61,7 +64,15 @@ const BottomTabNavigator = () => {
               externalStyles={styles.addIconContainer}
             />
           ),
-        }}
+          headerLeft: () => (
+            <Icon
+              name="arrow-left"
+              size={24}
+              color={"#212121"}
+              onPress={() => navigation.goBack()}
+            />
+          ),
+        })}
       />
       <Tab.Screen
         name="Profile"
