@@ -10,6 +10,9 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import FIcon from "react-native-vector-icons/Feather";
 
+// Import image
+import publicationImage from "../assets/images/Publication.png";
+
 const CreatePostScreen = () => {
   const [image, setImage] = useState("1");
   const [title, setTitle] = useState("");
@@ -23,10 +26,7 @@ const CreatePostScreen = () => {
         <View style={styles.imagePlaceholder}>
           {image ? (
             <>
-              <Image
-                source={require("../assets/images/Publication.png")}
-                style={styles.image}
-              />
+              <Image source={publicationImage} style={styles.image} />
               <View
                 style={[styles.imageIconWrapper, styles.imageLoadedIconWrapper]}
               >
@@ -76,20 +76,26 @@ const CreatePostScreen = () => {
       <TouchableOpacity
         style={[
           styles.publishButton,
-          isFormValid && styles.publishButtonActive,
+          isFormValid ? styles.publishButtonActive : null,
         ]}
+        accessibilityLabel="Publish"
+        accessible={true}
       >
         <Text
           style={[
             styles.publishButtonText,
-            isFormValid && styles.publishButtonTextActive,
+            isFormValid ? styles.publishButtonTextActive : null,
           ]}
         >
           Опублікувати
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.trashWrapper}>
+      <TouchableOpacity
+        style={styles.trashWrapper}
+        accessibilityLabel="Delete"
+        accessible={true}
+      >
         <FIcon name="trash-2" size={24} color="#BDBDBD" />
       </TouchableOpacity>
     </View>
@@ -196,6 +202,11 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
+  },
+  absolutePosition: {
+    position: "absolute",
+    top: 13,
+    left: 0,
   },
 });
 

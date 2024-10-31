@@ -18,14 +18,9 @@ const BottomTabNavigator = () => {
         headerShown: true,
         headerStyle: styles.header,
         headerTitleAlign: "center",
-        headerTitleStyle: {
-          fontSize: 17,
-          fontWeight: "500",
-          lineHeight: 22,
-          letterSpacing: 0.41,
-        },
-        headerRightContainerStyle: { padding: 16 },
-        headerLeftContainerStyle: { padding: 16 },
+        headerTitleStyle: styles.headerTitle,
+        headerRightContainerStyle: styles.headerContainer,
+        headerLeftContainerStyle: styles.headerContainer,
         tabBarStyle: styles.tabBar,
         tabBarShowLabel: false,
         tabBarActiveTintColor: "rgba(33, 33, 33, 0.8)",
@@ -78,7 +73,7 @@ const BottomTabNavigator = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
-          title: "User Profile",
+          headerShown: false, // Hide the header for Profile screen
           tabBarIcon: ({ color, size }) => (
             <TabBarIcon name="user" color={color} size={size} />
           ),
@@ -92,6 +87,15 @@ const styles = StyleSheet.create({
   header: {
     borderBottomColor: "#0000004D",
     borderBottomWidth: 1,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: "500",
+    lineHeight: 22,
+    letterSpacing: 0.41,
+  },
+  headerContainer: {
+    padding: 16,
   },
   tabBar: {
     height: 60,
