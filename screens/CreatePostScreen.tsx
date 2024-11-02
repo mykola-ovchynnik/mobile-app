@@ -10,18 +10,39 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import FIcon from "react-native-vector-icons/Feather";
 
+import {
+  Camera,
+  CameraView,
+  CameraType,
+  useCameraPermissions,
+} from "expo-camera";
 import * as Location from "expo-location";
+import * as MediaLibrary from "expo-media-library";
 
 import publicationImage from "../assets/images/Publication.png";
 
-const CreatePostScreen = ({ navigation }) => {
-  const [image, setImage] = useState("1");
+import { NavigationProp } from "@react-navigation/native";
+
+interface CreatePostScreenProps {
+  navigation: NavigationProp<any>;
+}
+
+const CreatePostScreen = ({ navigation }: CreatePostScreenProps) => {
+  const [image, setImage] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [locationName, setLocationName] = useState("");
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [permission, requestPermission] = useCameraPermissions();
+  const [hasCameraPermission, setHasCameraPermission] = useState<
+    boolean | null
+  >(null);
+  const [cameraRef, setCameraRef] = useState<Camera | null>(null);
+  const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState<
+    boolean | null
+  >(null);
 
   useEffect(() => {
     (async () => {
@@ -36,6 +57,37 @@ const CreatePostScreen = ({ navigation }) => {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasCameraPermission(status === "granted");
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      setHasMediaLibraryPermission(status === "granted");
+    })();
+  }, []);
+
+  const handleCapture = async () => {
+    if (cameraRef) {
+      const photo = await cameraRef.takePictureAsync();
+      if (hasMediaLibraryPermission) {
+        await MediaLibrary.saveToLibraryAsync(photo.uri);
+      }
+      setImage(photo.uri);
+    }
+  };
+
+  if (hasCameraPermission === null) {
+    return <View />;
+  }
+  if (hasCameraPermission === false) {
+    return <Text>Permission to access camera was denied</Text>;
+  }
+
   const handlePublish = () => {
     if (isFormValid) {
       console.log("Location:", location);
@@ -47,26 +99,36 @@ const CreatePostScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.imagePicker}>
+      <View style={styles.imagePicker}>
         <View style={styles.imagePlaceholder}>
           {image ? (
             <>
-              <Image source={publicationImage} style={styles.image} />
-              <View
+              <Image source={{ uri: image }} style={styles.image} />
+              <TouchableOpacity
                 style={[styles.imageIconWrapper, styles.imageLoadedIconWrapper]}
+                onPress={() => setImage(null)}
               >
                 <Icon name="camera" size={24} color="#FFFFFF" />
-              </View>
+              </TouchableOpacity>
             </>
           ) : (
-            <View style={styles.imageIconWrapper}>
-              <Icon name="camera" size={24} color="#BDBDBD" />
-            </View>
+            <CameraView
+              style={styles.camera}
+              facing="back"
+              ref={(ref) => setCameraRef(ref)}
+            >
+              <TouchableOpacity
+                style={styles.captureButton}
+                onPress={handleCapture}
+              >
+                <Icon name="camera" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            </CameraView>
           )}
         </View>
 
         <Text style={styles.placeholderText}>Завантажте фото</Text>
-      </TouchableOpacity>
+      </View>
 
       <View style={styles.inputWrapper}>
         <TextInput
@@ -232,6 +294,19 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 13,
     left: 0,
+  },
+  camera: {
+    width: "100%",
+    height: "100%",
+  },
+  captureButton: {
+    position: "absolute",
+    alignSelf: "center",
+    top: "50%",
+    transform: [{ translateY: -24 }],
+    padding: 16,
+    backgroundColor: "#ffffff80",
+    borderRadius: 50,
   },
 });
 
