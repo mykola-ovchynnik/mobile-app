@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,15 +10,40 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import FIcon from "react-native-vector-icons/Feather";
 
-// Import image
+import * as Location from "expo-location";
+
 import publicationImage from "../assets/images/Publication.png";
 
-const CreatePostScreen = () => {
+const CreatePostScreen = ({ navigation }) => {
   const [image, setImage] = useState("1");
   const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
+  const [locationName, setLocationName] = useState("");
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null
+  );
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const isFormValid = image && title && location;
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
+    })();
+  }, []);
+
+  const handlePublish = () => {
+    if (isFormValid) {
+      console.log("Location:", location);
+      navigation.navigate("Posts");
+    }
+  };
+
+  const isFormValid = image && title && locationName && location;
 
   return (
     <View style={styles.container}>
@@ -56,9 +81,9 @@ const CreatePostScreen = () => {
           <TextInput
             style={styles.inputLocation}
             placeholder="Місцевість..."
-            value={location}
+            value={locationName}
             placeholderTextColor={"#BDBDBD"}
-            onChangeText={setLocation}
+            onChangeText={setLocationName}
           />
           <FIcon
             name="map-pin"
@@ -78,6 +103,7 @@ const CreatePostScreen = () => {
           styles.publishButton,
           isFormValid ? styles.publishButtonActive : null,
         ]}
+        onPress={handlePublish}
         accessibilityLabel="Publish"
         accessible={true}
       >
@@ -122,9 +148,6 @@ const styles = StyleSheet.create({
   },
   imageIconWrapper: {
     position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: [{ translateX: -24 }, { translateY: -24 }],
     padding: 16,
     width: 60,
     height: 60,
@@ -143,6 +166,8 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     borderRadius: 8,
     backgroundColor: "#F6F6F6",
+    alignItems: "center",
+    justifyContent: "center",
   },
   image: {
     width: "100%",
