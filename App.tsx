@@ -1,13 +1,11 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useFonts } from "expo-font";
-
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
-
-import LoginScreen from "./screens/LoginScreen";
-import RegistrationScreen from "./screens/RegistrationScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import StackNavigator from "./navigation/StackNavigator";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 const MainStack = createStackNavigator();
 
@@ -24,8 +22,10 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <StackNavigator />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <StackNavigator />
+      </NavigationContainer>
+    </Provider>
   );
 }

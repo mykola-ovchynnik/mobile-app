@@ -2,18 +2,20 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import { ScreenNames } from "../App.consts";
 
 import PostsScreen from "../screens/PostsScreen";
 import CreatePostScreen from "../screens/CreatePostScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import TabBarIcon from "../components/TabBarIcon";
+import LogoutButton from "../components/LogoutButton";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Posts"
+      initialRouteName={ScreenNames.Posts}
       screenOptions={{
         headerShown: true,
         headerStyle: styles.header,
@@ -28,25 +30,19 @@ const BottomTabNavigator = () => {
       }}
     >
       <Tab.Screen
-        name="Posts"
+        name={ScreenNames.Posts}
         component={PostsScreen}
-        options={({ navigation }) => ({
+        options={() => ({
           title: "Публікації",
           tabBarIcon: ({ color, size }) => (
             <TabBarIcon name="grid" color={color} size={size} />
           ),
-          headerRight: () => (
-            <Icon
-              name="log-out"
-              size={24}
-              color={"#BDBDBD"}
-              onPress={() => navigation.navigate("Login")}
-            />
-          ),
+          headerRight: () => <LogoutButton />,
+          headerRightContainerStyle: { paddingRight: 16 },
         })}
       />
       <Tab.Screen
-        name="Create Post"
+        name={ScreenNames.CreatePost}
         component={CreatePostScreen}
         options={({ navigation }) => ({
           title: "Створити публікацію",
@@ -70,10 +66,10 @@ const BottomTabNavigator = () => {
         })}
       />
       <Tab.Screen
-        name="Profile"
+        name={ScreenNames.Profile}
         component={ProfileScreen}
         options={{
-          headerShown: false, // Hide the header for Profile screen
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <TabBarIcon name="user" color={color} size={size} />
           ),

@@ -10,18 +10,12 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import FIcon from "react-native-vector-icons/Feather";
 
-import {
-  Camera,
-  CameraView,
-  CameraType,
-  useCameraPermissions,
-} from "expo-camera";
+import { Camera, CameraView, useCameraPermissions } from "expo-camera";
 import * as Location from "expo-location";
 import * as MediaLibrary from "expo-media-library";
 
-import publicationImage from "../assets/images/Publication.png";
-
 import { NavigationProp } from "@react-navigation/native";
+import { ScreenNames } from "../App.consts";
 
 interface CreatePostScreenProps {
   navigation: NavigationProp<any>;
@@ -91,7 +85,7 @@ const CreatePostScreen = ({ navigation }: CreatePostScreenProps) => {
   const handlePublish = () => {
     if (isFormValid) {
       console.log("Location:", location);
-      navigation.navigate("Posts");
+      navigation.navigate(ScreenNames.Posts);
     }
   };
 

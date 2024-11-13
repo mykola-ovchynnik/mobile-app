@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  ImageBackground,
-  StyleSheet,
   FlatList,
   Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
 import Icon2 from "react-native-vector-icons/Feather";
-import { useNavigation } from "@react-navigation/native";
-import bgImage from "../assets/images/registration_bg.jpg";
-import avatarImage from "../assets/images/user.png";
-import posts from "../data/posts";
+
 import Post from "../components/Post";
 import { colors } from "../styles/global";
+
+import avatarImage from "../assets/images/user.png";
+import bgImage from "../assets/images/registration_bg.jpg";
+import posts from "../data/posts";
+import { ScreenNames } from "../App.consts";
+import LogoutButton from "../components/LogoutButton";
 
 const ProfileScreen = () => {
   const [avatarUri, setAvatarUri] = useState(avatarImage);
@@ -26,15 +30,15 @@ const ProfileScreen = () => {
   };
 
   const handleLogout = () => {
-    navigation.navigate("Login");
+    navigation.navigate(ScreenNames.Login);
   };
 
   return (
     <ImageBackground source={bgImage} style={styles.backgroundImage}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.logoutIcon} onPress={handleLogout}>
-          <Icon2 name="log-out" size={24} color="#BDBDBD" />
-        </TouchableOpacity>
+        <View style={styles.logoutIcon}>
+          <LogoutButton />
+        </View>
 
         <TouchableOpacity
           style={styles.avatarContainer}

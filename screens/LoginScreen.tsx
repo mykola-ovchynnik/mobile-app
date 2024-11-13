@@ -8,26 +8,61 @@ import SubmitButton from "../components/SubmitButton";
 import SwitchScreenLink from "../components/SwitchScreenLink";
 import useKeyboardVisibility from "../hooks/useKeyboardVisibility";
 import { sharedStyles } from "../styles/SharedStyles";
-import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
-import { StackParamList } from "../navigation/StackNavigator";
+import { LoginScreenNavigationProp, LoginScreenRouteProp } from "../App.types";
+import { ScreenNames } from "../App.consts";
+import { loginUserInDb } from "../firebase/firebase-auth";
+import { useAppDispatch } from "../store/store";
+import { userSliceActions } from "../store/userSlice";
 
-type LoginScreenProps = NativeStackScreenProps<StackParamList, "Login">;
+type LoginScreenProps = {
+  navigation: LoginScreenNavigationProp;
+  route: LoginScreenRouteProp;
+};
 
 const LoginScreen: FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const isKeyboardVisible = useKeyboardVisibility();
+  const dispatch = useAppDispatch();
 
   const handleEmailChange = (text: string) => setEmail(text);
 
   const handlePasswordChange = (text: string) => setPassword(text);
 
-  const handleFormSubmit = () => {
-    navigation.navigate("BottomTabNavigator");
+  const handleFormSubmit = async () => {
+    if (email === "" || password === "") {
+      return;
+    }
+
+    try {
+      const user = await loginUserInDb({
+        email: email,
+        password: password,
+      });
+
+      if (!user) {
+        console.error("User not found");
+        return;
+      }
+
+      console.log(`User logged in successfully!`);
+
+      dispatch(
+        userSliceActions.setUser({
+          id: user.uid,
+          name: user.displayName || "",
+          email: user.email || email,
+        })
+      );
+
+      navigation.navigate(ScreenNames.BottomTabNavigator);
+    } catch (error) {
+      console.error("Error signing in", error);
+    }
   };
 
   const onRegistrationPress = () => {
-    navigation.navigate("Registration");
+    navigation.navigate(ScreenNames.Registration);
   };
 
   return (

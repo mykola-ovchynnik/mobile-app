@@ -10,13 +10,19 @@ import useKeyboardVisibility from "../hooks/useKeyboardVisibility";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
 import { colors } from "../styles/global";
 import { sharedStyles } from "../styles/SharedStyles";
-import { StackParamList } from "../navigation/StackNavigator";
-import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
+import {
+  RegistrationScreenNavigationProp,
+  RegistrationScreenRouteProp,
+} from "../App.types";
+import { ScreenNames } from "../App.consts";
+import { useAppDispatch } from "../store/store";
+import { registerUserInDb, updateUserProfile } from "../firebase/firebase-auth";
+import { userSliceActions } from "../store/userSlice";
 
-type RegistrationScreenProps = NativeStackScreenProps<
-  StackParamList,
-  "Registration"
->;
+type RegistrationScreenProps = {
+  navigation: RegistrationScreenNavigationProp;
+  route: RegistrationScreenRouteProp;
+};
 
 const RegistrationScreen: FC<RegistrationScreenProps> = ({ navigation }) => {
   const [login, setLogin] = useState("");
@@ -24,17 +30,44 @@ const RegistrationScreen: FC<RegistrationScreenProps> = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [avatarUri, setAvatarUri] = useState("");
   const isKeyboardVisible = useKeyboardVisibility();
+  const dispatch = useAppDispatch();
 
   const handleAvatarSelection = () => {
     setAvatarUri((prevUri) => (prevUri ? "" : "dummyUri"));
   };
 
-  const handleFormSubmit = () => {
-    // Handle registration logic
+  const handleFormSubmit = async () => {
+    if (login === "" || email === "" || password === "") {
+      return;
+    }
+
+    try {
+      const user = await registerUserInDb({
+        email: email,
+        password: password,
+      });
+      console.log(`User registered successfully!`);
+
+      dispatch(
+        userSliceActions.setUser({
+          id: user.uid,
+          name: user.displayName || login,
+          email: user.email || email,
+        })
+      );
+
+      navigation.navigate(ScreenNames.BottomTabNavigator);
+
+      updateUserProfile({ displayName: login }).catch((e) => {
+        console.error("Error when updating user profile.", e);
+      });
+    } catch (e) {
+      console.error("Registration error", e);
+    }
   };
 
   const onLoginPress = () => {
-    navigation.navigate("Login");
+    navigation.navigate(ScreenNames.Login);
   };
 
   return (

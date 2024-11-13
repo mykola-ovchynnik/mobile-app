@@ -1,36 +1,10 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import User from "../components/User";
+import { StyleSheet, View } from "react-native";
+
 import PostsList from "../components/PostsList";
+import User from "../components/User";
 import { colors } from "../styles/global";
-
-import forestImage from "../assets/images/forest.png";
-import skyImage from "../assets/images/sky.png";
-import houseImage from "../assets/images/house.png";
-
-const posts = [
-  {
-    id: "1",
-    title: "Ліс",
-    image: forestImage,
-    commentsCount: 10,
-    location: "Ivano-Frankivs'k Region, Ukraine",
-  },
-  {
-    id: "2",
-    title: "Захід на чорному морі",
-    image: skyImage,
-    commentsCount: 5,
-    location: "Ukraine",
-  },
-  {
-    id: "3",
-    title: "Старий будиночок у Венеції",
-    image: houseImage,
-    commentsCount: 8,
-    location: "Italy",
-  },
-];
+import posts from "../data/posts";
 
 const PostsScreen: React.FC = () => {
   return (

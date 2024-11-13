@@ -1,4 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
+import { StackParamList } from "../App.types";
+import { ScreenNames } from "../App.consts";
 import Icon from "react-native-vector-icons/Feather";
 import { colors } from "../styles/global";
 
@@ -7,26 +9,28 @@ import RegistrationScreen from "../screens/RegistrationScreen";
 import BottomTabNavigator from "./BottomTabNavigator";
 import PostCommentsScreen from "../screens/PostCommentsScreen";
 
-export type StackParamList = {
-  BottomTabNavigator: undefined;
-  Login: undefined;
-  Registration: undefined;
-  PostComments: undefined;
-};
-
 const Stack = createStackNavigator<StackParamList>();
 
 const StackNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName={ScreenNames.Login}
       screenOptions={{ headerShown: false }}
     >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Registration" component={RegistrationScreen} />
-      <Stack.Screen name="BottomTabNavigator" component={BottomTabNavigator} />
+      <Stack.Screen name={ScreenNames.Login} component={LoginScreen} />
+
       <Stack.Screen
-        name="PostComments"
+        name={ScreenNames.Registration}
+        component={RegistrationScreen}
+      />
+
+      <Stack.Screen
+        name={ScreenNames.BottomTabNavigator}
+        component={BottomTabNavigator}
+      />
+
+      <Stack.Screen
+        name={ScreenNames.PostComments}
         component={PostCommentsScreen}
         options={({ navigation }) => ({
           headerShown: true,
