@@ -10,6 +10,7 @@ export type StackParamList = {
   [ScreenNames.Posts]: undefined;
   [ScreenNames.CreatePost]: undefined;
   [ScreenNames.Profile]: undefined;
+  [ScreenNames.Map]: { latitude: number; longitude: number };
 };
 
 export type RootStackNavigationProp = StackNavigationProp<StackParamList>;
@@ -40,3 +41,11 @@ export type PostCommentsScreenRouteProp = RouteProp<
   StackParamList,
   ScreenNames.PostComments
 >;
+
+export type MapScreenNavigationProp = StackNavigationProp<
+  StackParamList,
+  ScreenNames.Map
+>;
+
+// MapScreen
+export type MapScreenRouteProp = RouteProp<StackParamList, ScreenNames.Map>;

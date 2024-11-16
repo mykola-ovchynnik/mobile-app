@@ -1,3 +1,4 @@
+import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 
 interface UserProps {
@@ -21,9 +22,6 @@ const User: React.FC<UserProps> = ({ userName, userEmail }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 32,
-    paddingLeft: 16,
-    paddingRight: 16,
     flexDirection: "row",
     gap: 8,
   },

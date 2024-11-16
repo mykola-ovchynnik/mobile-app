@@ -10,6 +10,7 @@ interface PostProps {
   title: string;
   commentsCount: number;
   location: string;
+  coordinates: { latitude: number; longitude: number };
 }
 
 const Post: React.FC<PostProps> = ({
@@ -17,9 +18,11 @@ const Post: React.FC<PostProps> = ({
   title,
   commentsCount,
   location,
+  coordinates,
 }) => {
   type RootStackParamList = {
     PostComments: { image: any };
+    Map: { latitude: number; longitude: number };
   };
 
   type PostNavigationProp = StackNavigationProp<
@@ -28,6 +31,13 @@ const Post: React.FC<PostProps> = ({
   >;
 
   const navigation = useNavigation<PostNavigationProp>();
+
+  const handleLocationPress = () => {
+    navigation.navigate("Map", {
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -45,10 +55,13 @@ const Post: React.FC<PostProps> = ({
           />
           <Text style={styles.commentsText}>{commentsCount}</Text>
         </TouchableOpacity>
-        <View style={styles.locationContainer}>
+        <TouchableOpacity
+          style={styles.locationContainer}
+          onPress={handleLocationPress}
+        >
           <Feather name="map-pin" size={24} color={colors.placeholderGrey} />
           <Text style={styles.locationText}>{location}</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -9,6 +9,7 @@ interface Post {
   image: any;
   commentsCount: number;
   location: string;
+  coordinates: { latitude: number; longitude: number };
 }
 
 interface PostsListProps {
@@ -26,6 +27,7 @@ const PostsList: React.FC<PostsListProps> = ({ posts }) => {
           title={item.title}
           commentsCount={item.commentsCount}
           location={item.location}
+          coordinates={item.coordinates}
         />
       )}
       contentContainerStyle={styles.listContainer}

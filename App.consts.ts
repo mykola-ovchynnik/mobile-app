@@ -4,6 +4,7 @@ export enum ScreenNames {
   Registration = "Registration",
   BottomTabNavigator = "BottomTabNavigator",
   PostComments = "PostComments",
+  Map = "Map",
 
   // Bottom Tab Navigator Screens
   Posts = "Posts",

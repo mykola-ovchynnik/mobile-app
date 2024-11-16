@@ -20,10 +20,13 @@ import bgImage from "../assets/images/registration_bg.jpg";
 import posts from "../data/posts";
 import { ScreenNames } from "../App.consts";
 import LogoutButton from "../components/LogoutButton";
+import { useAppSelector } from "../store/store";
+import { selectUserName } from "../store/userSelectors";
 
 const ProfileScreen = () => {
   const [avatarUri, setAvatarUri] = useState(avatarImage);
   const navigation = useNavigation();
+  const userName = useAppSelector(selectUserName);
 
   const handleAvatarSelection = () => {
     setAvatarUri("");
@@ -53,7 +56,7 @@ const ProfileScreen = () => {
           />
         </TouchableOpacity>
 
-        <Text style={styles.userName}>Natali Romanova</Text>
+        <Text style={styles.userName}>{userName}</Text>
 
         <FlatList
           data={posts}
@@ -64,6 +67,7 @@ const ProfileScreen = () => {
               title={item.title}
               commentsCount={item.commentsCount}
               location={item.location}
+              coordinates={item.coordinates}
             />
           )}
         />
