@@ -1,12 +1,12 @@
 import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
+import { useAppSelector } from "../store/store";
+import { selectUserName, selectUserEmail } from "../store/userSelectors";
 
-interface UserProps {
-  userName: string;
-  userEmail: string;
-}
+const User: React.FC = () => {
+  const userName = useAppSelector(selectUserName);
+  const userEmail = useAppSelector(selectUserEmail);
 
-const User: React.FC<UserProps> = ({ userName, userEmail }) => {
   return (
     <View style={styles.container}>
       <View style={styles.image}>
@@ -22,6 +22,7 @@ const User: React.FC<UserProps> = ({ userName, userEmail }) => {
 
 const styles = StyleSheet.create({
   container: {
+    alignSelf: "flex-start",
     flexDirection: "row",
     gap: 8,
   },

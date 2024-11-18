@@ -10,7 +10,7 @@ export type StackParamList = {
   [ScreenNames.Posts]: undefined;
   [ScreenNames.CreatePost]: undefined;
   [ScreenNames.Profile]: undefined;
-  [ScreenNames.Map]: { latitude: number; longitude: number };
+  [ScreenNames.Map]: { location: string };
 };
 
 export type RootStackNavigationProp = StackNavigationProp<StackParamList>;

@@ -1,16 +1,8 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import Post from "./Post";
-import { colors } from "../styles/global";
 
-interface Post {
-  id: string;
-  title: string;
-  image: any;
-  commentsCount: number;
-  location: string;
-  coordinates: { latitude: number; longitude: number };
-}
+import { colors } from "../styles/global";
+import Post from "./Post";
 
 interface PostsListProps {
   posts: Post[];
@@ -24,10 +16,10 @@ const PostsList: React.FC<PostsListProps> = ({ posts }) => {
       renderItem={({ item }) => (
         <Post
           image={item.image}
-          title={item.title}
-          commentsCount={item.commentsCount}
+          name={item.name}
+          comments={item.comments}
           location={item.location}
-          coordinates={item.coordinates}
+          likesCount={item.likesCount}
         />
       )}
       contentContainerStyle={styles.listContainer}

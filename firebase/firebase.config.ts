@@ -3,17 +3,14 @@ import { initializeApp } from "firebase/app";
 import { getReactNativePersistence, initializeAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { config } from "dotenv";
-
-config();
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  appId: process.env.FIREBASE_APP_ID,
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
+  apiKey: "AIzaSyA2gZ53Ep-2RDc_tl6hT_iHuOBM989vIpg",
+  authDomain: "my-app-5061a.firebaseapp.com",
+  projectId: "my-app-5061a",
+  storageBucket: "my-app-5061a.firebasestorage.app",
+  appId: "1:223837419458:android:3267896304de8cb2ba085b",
+  databaseURL: "<https://my-app-5061a.firebaseio.com>",
 };
 
 const app = initializeApp(firebaseConfig);

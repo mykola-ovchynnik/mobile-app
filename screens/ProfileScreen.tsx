@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ImageBackground,
@@ -12,65 +13,72 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
 import Icon2 from "react-native-vector-icons/Feather";
 
-import Post from "../components/Post";
 import { colors } from "../styles/global";
-
-import avatarImage from "../assets/images/user.png";
-import bgImage from "../assets/images/registration_bg.jpg";
-import posts from "../data/posts";
 import { ScreenNames } from "../App.consts";
 import LogoutButton from "../components/LogoutButton";
-import { useAppSelector } from "../store/store";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import { selectUserName } from "../store/userSelectors";
+import { getPosts } from "../firebase/firestore";
+import { postSliceActions } from "../store/postSlice";
+import { selectPosts } from "../store/postSelectors";
+import PostItem from "../components/PostItem";
 
 const ProfileScreen = () => {
-  const [avatarUri, setAvatarUri] = useState(avatarImage);
   const navigation = useNavigation();
   const userName = useAppSelector(selectUserName);
 
-  const handleAvatarSelection = () => {
-    setAvatarUri("");
-  };
+  const posts = useAppSelector(selectPosts);
+  const dispatch = useAppDispatch();
 
-  const handleLogout = () => {
-    navigation.navigate(ScreenNames.Login);
-  };
+  const [isLoading, setIsLoading] = useState<boolean>(posts.length === 0);
+
+  useEffect(() => {
+    if (posts.length === 0) {
+      getPosts().then((posts) => {
+        dispatch(postSliceActions.setPosts(posts));
+        setIsLoading(false);
+      });
+    }
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
-    <ImageBackground source={bgImage} style={styles.backgroundImage}>
+    <ImageBackground
+      source={require("../assets/images/registration_bg.jpg")}
+      style={styles.backgroundImage}
+    >
       <View style={styles.container}>
         <View style={styles.logoutIcon}>
           <LogoutButton />
         </View>
 
-        <TouchableOpacity
-          style={styles.avatarContainer}
-          onPress={handleAvatarSelection}
-        >
-          <Image source={avatarUri} style={styles.avatarPlaceholder} />
+        <TouchableOpacity style={styles.avatarContainer}>
+          <Image
+            source={require("../assets/images/user.png")}
+            style={styles.avatarPlaceholder}
+          />
           <Icon
-            name={avatarUri ? "close" : "plus"}
+            name={"close"}
             size={25}
-            color={avatarUri ? colors.placeholderGrey : colors.orange}
+            color={colors.placeholderGrey}
             style={styles.addAvatar}
           />
         </TouchableOpacity>
 
         <Text style={styles.userName}>{userName}</Text>
 
-        <FlatList
-          data={posts}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <Post
-              image={item.image}
-              title={item.title}
-              commentsCount={item.commentsCount}
-              location={item.location}
-              coordinates={item.coordinates}
-            />
-          )}
-        />
+        <View style={styles.postsWrap}>
+          {posts.map((post) => (
+            <PostItem key={post.id} post={post} />
+          ))}
+        </View>
       </View>
     </ImageBackground>
   );
@@ -128,6 +136,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     alignSelf: "center",
     marginBottom: 32,
+  },
+  postsWrap: {
+    gap: 32,
+    width: "100%",
   },
 });
 

@@ -4,63 +4,51 @@ import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../styles/global";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { Post } from "../firebase/firestore.types";
+import { ScreenNames } from "../App.consts";
+import { StackParamList } from "../App.types";
 
-interface PostProps {
-  image: any;
-  title: string;
-  commentsCount: number;
-  location: string;
-  coordinates: { latitude: number; longitude: number };
-}
+type RootStackParamList = {
+  PostComments: { image: any };
+  Map: StackParamList["Map"];
+};
 
-const Post: React.FC<PostProps> = ({
-  image,
-  title,
-  commentsCount,
-  location,
-  coordinates,
-}) => {
-  type RootStackParamList = {
-    PostComments: { image: any };
-    Map: { latitude: number; longitude: number };
-  };
+type PostNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "PostComments"
+>;
 
-  type PostNavigationProp = StackNavigationProp<
-    RootStackParamList,
-    "PostComments"
-  >;
-
+const PostItem: React.FC<{ post: Post }> = ({ post }) => {
   const navigation = useNavigation<PostNavigationProp>();
-
-  const handleLocationPress = () => {
-    navigation.navigate("Map", {
-      latitude: coordinates.latitude,
-      longitude: coordinates.longitude,
-    });
-  };
 
   return (
     <View style={styles.container}>
-      <Image source={image} style={styles.image} />
-      <Text style={styles.title}>{title}</Text>
+      <Image source={post.image} style={styles.image} />
+      <Text style={styles.title}>{post.name}</Text>
       <View style={styles.infoContainer}>
         <TouchableOpacity
           style={styles.commentsContainer}
-          onPress={() => navigation.navigate("PostComments", { image })}
+          onPress={() =>
+            navigation.navigate("PostComments", { image: post.image })
+          }
         >
           <Feather
             name="message-circle"
             size={24}
             color={colors.placeholderGrey}
           />
-          <Text style={styles.commentsText}>{commentsCount}</Text>
+          <Text style={styles.commentsText}>{post.comments.length}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.locationContainer}
-          onPress={handleLocationPress}
+          onPress={() =>
+            navigation.navigate(ScreenNames.Map, {
+              location: post.location,
+            })
+          }
         >
           <Feather name="map-pin" size={24} color={colors.placeholderGrey} />
-          <Text style={styles.locationText}>{location}</Text>
+          <Text style={styles.locationText}>{post.location}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -103,8 +91,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontSize: 16,
     textDecorationLine: "underline",
-    color: colors.blackPrimary, // Use blackPrimary for location text
+    color: colors.blackPrimary,
   },
 });
 
-export default Post;
+export default PostItem;
