@@ -1,7 +1,6 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import { RouteProp } from "@react-navigation/native";
+import { View, StyleSheet, Dimensions } from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { MapScreenRouteProp } from "../App.types";
 
 type MapScreenProps = {
@@ -16,15 +15,21 @@ const MapScreen: React.FC<MapScreenProps> = ({ route }) => {
   return (
     <View style={styles.container}>
       <MapView
-        style={StyleSheet.absoluteFillObject}
-        initialRegion={{
-          latitude: lat || 0,
-          longitude: long || 0,
+        provider={PROVIDER_GOOGLE}
+        style={styles.mapStyle}
+        region={{
+          latitude: lat,
+          longitude: long,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        mapType="standard"
       >
-        <Marker coordinate={{ latitude: lat, longitude: long }} />
+        <Marker
+          title="I am here"
+          coordinate={{ latitude: lat, longitude: long }}
+          description="Hello"
+        />
       </MapView>
     </View>
   );
@@ -33,6 +38,10 @@ const MapScreen: React.FC<MapScreenProps> = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  mapStyle: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
 });
 

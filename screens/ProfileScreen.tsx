@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Image,
   ImageBackground,
   StyleSheet,
@@ -9,12 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
-import Icon2 from "react-native-vector-icons/Feather";
 
 import { colors } from "../styles/global";
-import { ScreenNames } from "../App.consts";
 import LogoutButton from "../components/LogoutButton";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { selectUserName } from "../store/userSelectors";
@@ -22,9 +18,9 @@ import { getPosts } from "../firebase/firestore";
 import { postSliceActions } from "../store/postSlice";
 import { selectPosts } from "../store/postSelectors";
 import PostItem from "../components/PostItem";
+import { ScrollView } from "react-native-gesture-handler";
 
 const ProfileScreen = () => {
-  const navigation = useNavigation();
   const userName = useAppSelector(selectUserName);
 
   const posts = useAppSelector(selectPosts);
@@ -74,11 +70,11 @@ const ProfileScreen = () => {
 
         <Text style={styles.userName}>{userName}</Text>
 
-        <View style={styles.postsWrap}>
+        <ScrollView contentContainerStyle={styles.postsWrap}>
           {posts.map((post) => (
             <PostItem key={post.id} post={post} />
           ))}
-        </View>
+        </ScrollView>
       </View>
     </ImageBackground>
   );

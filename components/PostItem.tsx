@@ -39,6 +39,7 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
           />
           <Text style={styles.commentsText}>{post.comments.length}</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.locationContainer}
           onPress={() =>
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
     color: colors.blackPrimary,
   },
   infoContainer: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 8,

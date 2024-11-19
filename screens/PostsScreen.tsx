@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  StyleSheet,
-  View,
-  Text,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, View, Text } from "react-native";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { selectUserName, selectUserEmail } from "../store/userSelectors";
 
-import PostsList from "../components/PostsList";
 import User from "../components/User";
 import { colors } from "../styles/global";
 import { selectPosts } from "../store/postSelectors";
@@ -17,8 +9,6 @@ import { ScrollView } from "react-native-gesture-handler";
 import PostItem from "../components/PostItem";
 import { getPosts } from "../firebase/firestore";
 import { postSliceActions } from "../store/postSlice";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const PostsScreen: React.FC = () => {
   const posts = useAppSelector(selectPosts);
@@ -77,7 +67,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   postsScreenWrap: {
-    width: SCREEN_WIDTH,
+    width: "100%",
     paddingHorizontal: 16,
     backgroundColor: "white",
     alignItems: "center",
