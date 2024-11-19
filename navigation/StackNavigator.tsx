@@ -8,7 +8,7 @@ import { colors } from "../styles/global";
 import LoginScreen from "../screens/LoginScreen";
 import RegistrationScreen from "../screens/RegistrationScreen";
 import BottomTabNavigator from "./BottomTabNavigator";
-import PostCommentsScreen from "../screens/PostCommentsScreen";
+
 import MapScreen from "../screens/MapScreen";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firebase.config";
@@ -16,6 +16,7 @@ import { useAppDispatch } from "../store/store";
 import { useEffect, useState } from "react";
 import { userSliceActions } from "../store/userSlice";
 import { ActivityIndicator, View } from "react-native";
+import { CommentsScreen } from "../screens/PostCommentsScreen";
 
 const Stack = createStackNavigator<StackParamList>();
 
@@ -75,7 +76,7 @@ const StackNavigator = () => {
 
       <Stack.Screen
         name={ScreenNames.PostComments}
-        component={PostCommentsScreen}
+        component={CommentsScreen}
         options={({ navigation }) => ({
           headerShown: true,
           title: "Коментарі",

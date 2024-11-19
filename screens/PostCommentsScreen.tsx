@@ -1,162 +1,148 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  StyleSheet,
-  ImageSourcePropType,
-  TextInput,
-  TouchableOpacity,
+  PostCommentsScreenRouteProp,
+  RootStackNavigationProp,
+} from "../App.types";
+import { selectUser } from "../store/userSelectors";
+import { useAppDispatch, useAppSelector } from "../store/store";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenNames } from "../App.consts";
+import {
+  Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { colors } from "../styles/global";
-import userImage from "../assets/images/user.png";
+import { addCommentToPost } from "../firebase/firestore";
+import { postSliceActions } from "../store/postSlice";
+import uuid from "react-native-uuid";
+import { Input } from "../components/CommentInput";
+import { CommentItem } from "../components/CommentItem";
+import { Comment } from "../firebase/firestore.types";
 
-interface Comment {
-  id: string;
-  userImage: ImageSourcePropType;
-  comment: string;
-  date: string;
-}
+export const CommentsScreen: FC<{
+  route?: PostCommentsScreenRouteProp;
+}> = ({ route }) => {
+  const navigation = useNavigation<RootStackNavigationProp>();
+  const post = route?.params?.post ?? null;
+  const user = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
+  const [isSendingComment, setIsSendingComment] = useState<boolean>(false);
+  const [writingComment, setWritingComment] = useState<string>("");
+  const [comments, setComments] = useState<Comment[]>(post?.comments ?? []);
 
-const comments: Comment[] = [
-  {
-    id: "1",
-    userImage: userImage,
-    comment:
-      "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!",
-    date: "09 червня, 2020 | 08:40",
-  },
-  {
-    id: "2",
-    userImage: userImage,
-    comment:
-      "A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images.",
-    date: "09 червня, 2020 | 09:14",
-  },
-  {
-    id: "3",
-    userImage: userImage,
-    comment: "Thank you! That was very helpful!",
-    date: "09 червня, 2020 | 09:20",
-  },
-];
+  console.log("user", user);
+  if (!post?.comments || !user) {
+    Alert.alert("No comments or no user");
+    navigation.navigate(ScreenNames.Posts);
+    return null;
+  }
 
-const PostCommentsScreen = ({ route }: any) => {
-  const { image } = route.params;
-  const [comment, setComment] = useState("");
+  const handleSendComment = async () => {
+    if (writingComment.length === 0 || !post.id) {
+      return;
+    }
+
+    setIsSendingComment(true);
+
+    try {
+      const updatedPost = await addCommentToPost({
+        postId: post.id,
+        comment: {
+          text: writingComment,
+          date: new Date().toISOString(),
+          postId: post.id,
+          userId: user.id,
+          id: uuid.v4() as string,
+        },
+      });
+
+      setWritingComment("");
+      setComments(updatedPost.comments);
+      dispatch(postSliceActions.updatePost(updatedPost));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSendingComment(false);
+    }
+  };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <Image source={image} style={styles.postImage} />
-      <FlatList
-        data={comments}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.commentContainer}>
-            <Image source={item.userImage} style={styles.userImage} />
-            <View style={styles.commentContent}>
-              <Text style={styles.commentText}>{item.comment}</Text>
-              <Text style={styles.commentDate}>{item.date}</Text>
-            </View>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+        <View style={styles.commentsScreenWrap}>
+          <View style={styles.imageWrap}>
+            <Image
+              resizeMode="cover"
+              style={styles.image}
+              source={require("../assets/images/comments-image.png")}
+            />
           </View>
-        )}
-        contentContainerStyle={styles.commentsList}
-      />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Коментувати..."
-          value={comment}
-          onChangeText={setComment}
-          placeholderTextColor="#BDBDBD"
-        />
-        <TouchableOpacity style={styles.sendButton}>
-          <Feather name="arrow-up" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+
+          <View style={styles.commentsWrap}>
+            {comments.map((comment) => (
+              <CommentItem key={comment.id} comment={comment} />
+            ))}
+          </View>
+
+          <Input
+            placeholder="Коментувати"
+            inputState={{ value: writingComment, isValid: true }}
+            onChangeText={(value) => setWritingComment(value)}
+            inputStyle={styles.commentInput}
+            rightButton={
+              <TouchableOpacity
+                disabled={writingComment.length === 0 || isSendingComment}
+                onPress={handleSendComment}
+              >
+                <Feather name="arrow-up" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            }
+            rightButtonStyle={styles.sendButton}
+          />
+        </View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: colors.white,
+  },
+  commentsScreenWrap: {
+    paddingTop: 32,
+    flex: 1,
+    paddingHorizontal: 16,
     gap: 32,
   },
-  postImage: {
+  imageWrap: {
     width: "100%",
     height: 240,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
     borderRadius: 8,
   },
-  commentsList: {
+  commentsWrap: {
     gap: 24,
   },
-  commentContainer: {
-    flexDirection: "row",
-    marginBottom: 16,
-  },
-  userImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 16,
-  },
-  commentContent: {
-    flex: 1,
-    borderTopRightRadius: 6,
-    borderBottomRightRadius: 6,
-    borderBottomLeftRadius: 6,
-    padding: 16,
-    backgroundColor: "#F6F6F6",
-  },
-  commentText: {
-    fontSize: 13,
-    color: "#212121",
-    marginBottom: 8,
-  },
-  commentDate: {
-    fontSize: 10,
-    color: "#BDBDBD",
-  },
-  inputContainer: {
-    position: "absolute",
-    bottom: 16,
-    left: 16,
-    right: 16,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  input: {
-    flex: 1,
-    height: 50,
-    backgroundColor: "#F6F6F6",
+
+  commentInput: {
     borderRadius: 100,
-    paddingLeft: 16,
-    paddingRight: 50,
-    fontSize: 16,
-    color: "#212121",
-    borderWidth: 1,
-    borderColor: "#E8E8E8",
+    backgroundColor: "#F6F6F6",
   },
   sendButton: {
-    position: "absolute",
-    right: 8,
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: "#FF6C00",
-    justifyContent: "center",
-    alignItems: "center",
+    transform: [{ translateY: -17 }], // 50% of send icon height
   },
 });
-
-export default PostCommentsScreen;

@@ -29,7 +29,7 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
         <TouchableOpacity
           style={styles.commentsContainer}
           onPress={() =>
-            navigation.navigate("PostComments", { image: post.image })
+            navigation.navigate(ScreenNames.PostComments, { post })
           }
         >
           <Feather
