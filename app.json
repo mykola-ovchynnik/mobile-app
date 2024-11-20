@@ -30,6 +30,13 @@
       "allowMultipleSelection": true,
       "allowsEditing": true
     },
-    "plugins": ["expo-font"]
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "817f3668-dee9-4501-8092-ddda88d37907"
+      }
+    }
   }
 }
